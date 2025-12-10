@@ -7,6 +7,7 @@
     "node": ">=22.0.0"
   },
   "scripts": {
+    "dev": "tsx --watch src/main.ts",
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/main.js --compiled",
     "prettier": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,html,css,json}\"",
