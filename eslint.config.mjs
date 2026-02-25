@@ -1,60 +1,51 @@
+import eslint from "@eslint/js";
+import * as tsParser from "@typescript-eslint/parser";
 import { defineConfig, globalIgnores } from "eslint/config";
-import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
+import eslintConfigPrettier from "eslint-config-prettier/flat";
+import importPlugin from "eslint-plugin-import";
 import unusedImports from "eslint-plugin-unused-imports";
-import _import from "eslint-plugin-import";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import prettier from "eslint-plugin-prettier";
 import globals from "globals";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import { configs as tsConfigs } from "typescript-eslint";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
+const eslintConfig = defineConfig([
+  eslint.configs.recommended,
+  tsConfigs.recommended,
 
-export default defineConfig([
+  importPlugin.flatConfigs.recommended,
+  importPlugin.flatConfigs.typescript,
+
+  eslintConfigPrettier,
+
   globalIgnores([
-    ".now/*",
-    "**/*.css",
-    "**/.changeset",
-    "**/dist",
-    "esm/*",
-    "public/*",
-    "tests/*",
-    "scripts/*",
-    "**/*.config.js",
     "**/.DS_Store",
-    "**/node_modules",
-    "**/coverage",
-    "**/build",
-    "!**/.commitlintrc.cjs",
-    "!**/.lintstagedrc.cjs",
-    "!**/jest.config.js",
-    "!**/plopfile.js",
-    "!**/tsup.config.ts",
+    ".ignore/**",
+    "build/**",
+    "dist/**",
+    "node_modules/**",
+    "out/**",
+    "public/**",
   ]),
-  {
-    extends: fixupConfigRules(compat.extends("plugin:prettier/recommended")),
 
+  {
     plugins: {
       "unused-imports": unusedImports,
-      import: fixupPluginRules(_import),
-      "@typescript-eslint": typescriptEslint,
-      prettier: fixupPluginRules(prettier),
     },
+  },
 
+  {
+    settings: {
+      "import/resolver": { typescript: true, node: true },
+      "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
+    },
+  },
+
+  {
     languageOptions: {
       globals: {
         ...Object.fromEntries(
           Object.entries(globals.browser).map(([key]) => [key, "off"])
         ),
+
         ...globals.node,
       },
 
@@ -62,27 +53,18 @@ export default defineConfig([
       ecmaVersion: 12,
       sourceType: "module",
 
-      parserOptions: {},
+      parserOptions: { ecmaFeatures: { jsx: true } },
     },
+  },
 
-    settings: {},
-
-    files: ["**/*.ts", "**/*.tsx"],
-
+  {
     rules: {
       "no-console": "warn",
+
       "no-unused-vars": "off",
-      "prefer-const": "error",
       "unused-imports/no-unused-vars": "off",
-      "unused-imports/no-unused-imports": "warn",
 
-      "prettier/prettier": [
-        "warn",
-        {
-          endOfLine: "auto",
-        },
-      ],
-
+      "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -92,10 +74,17 @@ export default defineConfig([
         },
       ],
 
+      "import/no-duplicates": "warn",
+      "import/no-dynamic-require": "warn",
       "import/order": [
         "warn",
         {
           alphabetize: { order: "asc", caseInsensitive: true },
+
+          pathGroups: [
+            { pattern: "@/types/**", group: "type" },
+            { pattern: "@/**", group: "internal", position: "after" },
+          ],
 
           groups: [
             "type",
@@ -103,32 +92,17 @@ export default defineConfig([
             "object",
             "external",
             "internal",
-            "parent",
-            "sibling",
+            ["sibling", "parent"],
             "index",
-          ],
-
-          pathGroups: [
-            {
-              pattern: "@models/**",
-              group: "internal",
-              position: "before",
-            },
-            {
-              pattern: "@redis/**",
-              group: "internal",
-              position: "before",
-            },
-            {
-              pattern: "@utils/**",
-              group: "internal",
-              position: "before",
-            },
           ],
 
           "newlines-between": "always",
         },
       ],
+
+      "unused-imports/no-unused-imports": "warn",
     },
   },
 ]);
+
+export default eslintConfig;
