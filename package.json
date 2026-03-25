@@ -9,17 +9,22 @@
   "scripts": {
     "dev": "tsx --watch src/main.ts",
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-    "start": "node dist/main.js --compiled",
+    "start": "cross-env BUILD_COMPILED=true node dist/main.js",
     "lint": "eslint --fix .",
     "prettier": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,html,css,json}\""
   },
   "dependencies": {
-    "dotenv": "^17.3.1"
+    "dotenv": "^17.3.1",
+    "lodash": "^4.17.23",
+    "ms": "^2.1.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
+    "@types/lodash": "^4.17.24",
+    "@types/ms": "^2.1.0",
     "@types/node": "^24.7.2",
     "@typescript-eslint/parser": "^8.56.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
