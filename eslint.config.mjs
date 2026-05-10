@@ -76,6 +76,7 @@ const eslintConfig = defineConfig([
 
       "import/no-duplicates": "warn",
       "import/no-dynamic-require": "warn",
+      "import/no-cycle": "error",
       "import/order": [
         "warn",
         {
