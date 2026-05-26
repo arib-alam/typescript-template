@@ -60,10 +60,10 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "no-console": "warn",
+      "no-shadow": "error",
 
       "no-unused-vars": "off",
       "unused-imports/no-unused-vars": "off",
-
       "@typescript-eslint/consistent-type-imports": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
